@@ -1,0 +1,154 @@
+import com.redknee.service.soap.gradleplugin.*;
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { 
+	      url uri('http://artifactory/libs-snapshot') 
+	} 
+    }
+    
+    configurations.classpath {
+        resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+
+    dependencies { 
+       classpath('redknee:build-plugin:1.0.+') { changing=true }
+       classpath('redknee:service-soap-plugin:1.0.+') { changing=true }
+       
+    }
+}
+
+
+apply plugin: 'redkneebuild'
+apply plugin: 'servicesoap'
+apply plugin: 'java' //To enable the configurations
+
+configurations.all {
+  resolutionStrategy {
+    // fail eagerly on version conflict (includes transitive dependencies)
+    // e.g. multiple different versions of the same dependency (group and name are equal)
+    //failOnVersionConflict()
+
+    // force certain versions of dependencies (including transitive)
+    //  *append new forced modules:
+    //force 'commons-collections:commons-collections:3.2.1'
+    //  *replace existing forced modules with new ones:
+    forcedModules = ['redknee:framework:6.1.0-SNAPSHOT', 'commons-collections:commons-collections:3.2.1']
+
+
+    // cache dynamic versions for 10 minutes
+    //cacheDynamicVersionsFor 10*60, 'seconds'
+    // don't cache changing modules at all
+    //cacheChangingModulesFor 0, 'seconds'
+  }
+}
+
+sourceCompatibility = 6
+
+deploy {
+    deployable = false
+    basePort = '8200'
+}
+
+
+dependencies {
+	compile 'redknee:framework:6.1.+'
+	compile 'commons-collections:commons-collections:3.2.1'
+    compile 'redknee:interface-crmapi:4.0.0+'
+    compile 'redknee:app-crm-calculation:1.3.0+'
+    compile 'redknee:interface-crm-hlr:1.0.16+'
+    compile 'redknee:interface-vra:2.0.0+'
+    compile 'redknee:service-lnp-bulkload:7.1.0+'
+    compile 'redknee:interface-app-crm:2.2.2+'
+    compile 'redknee:interface-app-mom:4.5.1-SNAPSHOT'
+    compile 'redknee:interface-app-osa-ecp:5.5.0+'
+    compile 'redknee:service-voicemail-mpathix:1.0.1+'
+    compile 'redknee:driver-voicemail-mpathix:1.0.1+'
+    compile 'redknee:interface-service-rating:5.5.0+'
+    compile 'redknee:interface-product-abm:1.0.63+'
+    compile 'redknee:interface-app-homezone:5.0.0+'
+    compile 'redknee:interface-app-loyalty:3.1.0+'
+    compile 'redknee:interface-product-s5600:5.6.+'
+    compile 'redknee:model-app-ff:1.1.0+'
+    compile 'redknee:model-app-smsb:1.0.15+'
+    compile 'redknee:interface-service-aaa:1.0.16+'
+    compile 'redknee:util-measurement-recording:1.1.0+'
+    compile 'redknee:util-processor:1.3.6+'
+    compile 'redknee:interface-app-transferfund:1.0.0-SNAPSHOT'
+    compile 'redknee:interface-app-troubleticket:1.0.12+'
+    compile 'redknee:interface-dynamics-crm:1.0.24+'
+    compile 'redknee:interface-app-crm-provision:1.0.0-SNAPSHOT'
+    compile 'redknee:service-etl-poller:1.0.99+'
+    compile 'redknee:service-aptilo:1.0.0+'
+    compile 'redknee:util-telnet:1.0.270+'
+    compile 'redknee:util-threadpool:2.2.526+'
+    compile 'redknee:service-home-operations:1.0.0+'
+    compile 'redknee:app-crm-core:2.0.0+'
+	compile 'apache-httpclient:commons-httpclient:3.0.1'
+	compile 'apache-logging:commons-logging:1.1.0.jboss'
+	compile 'apache-codec:commons-codec:1.2'
+	compile 'geronimo-spec:geronimo-spec-jms:1.1-rc4'
+	compile 'gnu-regexp:gnu-regexp:1.1.4'
+	compile 'itext:itext:2.0.8'
+	compile 'jacorb:jacorb:2_3_0-rkfix-b4'
+	compile 'avalon-framework:avalon-framework:4.1.5'
+	compile 'logkit:logkit:1.2'
+	compile 'themindelectric:glue:4.1.2'
+    compile 'redknee:esb-grr-schema:1.0.1-SNAPSHOT'
+	compile 'redknee:rkutil-misc-common:2.3.3-SNAPSHOT'
+	compile 'redknee:util-collection:2.4.0-SNAPSHOT'
+    compile 'redknee:service-poller-nbio:1.1.0-SNAPSHOT'
+    //compile 'redknee:util-collection:1_4_0:2_2_1'
+    compile 'redknee:util-xml:1.1.0-SNAPSHOT'	
+    compile 'redknee.ext.billsoft:eztax:1.0.0'
+		compile 'redknee:interface-selfcareapi:1.0.0-SNAPSHOT'
+	//compile 'redknee:service-poller-nbio-common-intr:1_4_2:1_4_12'
+    compile 'redknee:interface-selfcareapi:1.0.0-SNAPSHOT'
+    serviceSoap 'redknee:service-soap:5.4.+'
+	compile 'redknee:jain-protocol-ss7-tcap:3.1.0-SNAPSHOT'
+    serviceSoap 'redknee:service-soap:5.4.+'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/java'
+            srcDir "${buildDir}/xgen-generated"
+        }
+        xgen {
+            srcDir 'src/idl'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+            srcDir "${buildDir}/test-xgen-generated"
+        }
+        resources {
+            srcDir 'test/resources'
+        }
+    }
+}
+
+axis2Configs {
+    SubscriberProv63 {
+        wsdlLocation = 'src/wsdl/SubscriberProv63.wsdl'
+        serviceName = 'SubscriberProv63'
+        generatedCodeType = SoapGeneratedCodeTypeEnum.BOTH
+        outputPackage = 'com.redknee.product.s2200.idr.provisioning.soap'
+        unwrapParameters = false
+
+    }
+}
+
+task createWrapper(type: Wrapper) {
+  gradleVersion = '1.5'
+  doLast {
+        unixScript.text = unixScript.text.replace('DEFAULT_JVM_OPTS=""', 'DEFAULT_JVM_OPTS="-XX:MaxPermSize=4096m -Xmx4096m -Dfile.encoding=utf-8"')
+    }
+}

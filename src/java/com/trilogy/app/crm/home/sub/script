@@ -1,0 +1,14 @@
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberProvisioningHome/ProvisioningHome/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberSetPricePlanHome/SetPricePlanHome/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberCheckSubscriberHome/SubscriberCheckHome/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberProvisioningHomeFactory/ProvisioningHomeFactory/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberEditImeiInfoHome/EditImeiInfoHome/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberProvisioningHomeSupport/ProvisioningHomeSupport/g' *.java
+/opt/nsPerl5.005_03/nsperl.exe -p -ibak -e 's/SubscriberStateSMSNotificationHome/StateSMSNotificationHome/g' *.java
+mv SubscriberProvisioningHome.java ProvisioningHome.java
+mv SubscriberSetPricePlanHome.java SetPricePlanHome.java
+mv SubscriberProvisioningHomeFactory.java ProvisioningHomeFactory.java 
+mv SubscriberCheckSubscriberHome.java SubscriberCheckHome.java 
+mv SubscriberEditImeiInfoHome.java EditImeiInfoHome.java
+mv SubscriberProvisioningHomeSupport.java ProvisioningHomeSupport.java 
+mv SubscriberStateSMSNotificationHome.java StateSMSNotificationHome.java

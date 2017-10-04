@@ -1,0 +1,52 @@
+package com.trilogy.app.crm.web.border;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.trilogy.framework.xhome.context.Context;
+import com.trilogy.framework.xhome.home.Home;
+import com.trilogy.framework.xhome.home.HomeException;
+import com.trilogy.framework.xhome.home.SortingHome;
+import com.trilogy.framework.xhome.web.border.Border;
+import com.trilogy.framework.xhome.webcontrol.RequestServicer;
+import com.trilogy.framework.xhome.msp.Spid;
+import com.trilogy.framework.xhome.msp.SpidHome;
+import com.trilogy.framework.xhome.msp.TransientSpidHome;
+import com.trilogy.framework.xlog.log.*;
+
+import com.trilogy.app.crm.bean.CRMSpidHome;
+import com.trilogy.app.crm.bean.CRMSpid;
+
+public class UserSuperSpidBorder implements Border
+{
+	public void service(Context ctx, HttpServletRequest req, HttpServletResponse res, RequestServicer delegate)
+		throws ServletException, IOException
+	{
+		Home origSpidHome = (Home)ctx.get(SpidHome.class);
+		Context subCtx = ctx.createSubContext("Super Service Provider");
+
+		Home superSpidHome = new SortingHome(new TransientSpidHome());
+		subCtx.put(SpidHome.class, superSpidHome);
+		try
+		{
+			superSpidHome.create(new Spid(0, "All"));
+			Collection spids = origSpidHome.selectAll();
+			for (Iterator iter=spids.iterator(); iter.hasNext(); )
+			{
+				superSpidHome.create(iter.next());
+			}
+		}
+		catch (HomeException hEx)
+		{
+			new MinorLogMsg(this, "fail to add super service provider", hEx).log(ctx);
+		}
+
+		delegate.service(subCtx, req, res);
+	}
+}

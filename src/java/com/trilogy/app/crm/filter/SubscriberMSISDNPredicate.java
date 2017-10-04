@@ -1,0 +1,35 @@
+// INSPECTED: 29/09/2003 MLAM
+
+/*
+      SubscriberMSISDNPredicate
+
+      Author: Lily Zou
+      Date:   Sept 22, 2003
+*/
+
+
+package com.trilogy.app.crm.filter;
+
+import com.trilogy.app.crm.bean.Subscriber;
+import com.trilogy.framework.xhome.context.Context;
+import com.trilogy.framework.xhome.filter.Predicate;
+
+/** A Predicate used to retrieve subscriber with specific MSISDN from it Home **/
+public class SubscriberMSISDNPredicate
+	implements Predicate
+{
+	// REVIEW(maintainability): private data members should be placed after public methods
+	private String msisdn_;
+
+	public SubscriberMSISDNPredicate(String msisdn)
+	{
+		msisdn_ = msisdn;
+	}
+
+	public boolean f(Context ctx,Object obj)
+	{
+		Subscriber sub = (Subscriber)obj;
+
+		return (sub.getMSISDN().equals(msisdn_));
+	}
+}

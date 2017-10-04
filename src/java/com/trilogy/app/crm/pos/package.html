@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>com.redknee.app.crm.pos</title>
+</head>
+<body bgcolor="white">
+
+<p>This package provides a set of classes for generating Point of Sale (POS) reports 
+in comma delimited GZipped file format.  The top-level class is {@link
+com.redknee.app.crm.pos.PointOfSaleCronAgent}.  Its execute(ctx) method begins
+balance accumulation for all accounts with Postpaid subscribers and then proceeds 
+to generate the POS reports.  <BR>
+It is expected that this PointOfSaleCronAgent be
+configured to execute daily, since it is optimized for daily accumulations.
+In the CRON Task setup, a date parameter can be passed
+in to the PointOfSaleCronAgent class.  If this parameter date is passed in, the 
+PointOfSaleCronAgent will run accumulations until the given date.</p>
+
+<p>The break-down of the primary classes in this package is:</p>
+
+<dl>
+
+  <dt>
+    <strong>Low-Level Output Generation:</strong>
+    {@link com.redknee.app.crm.pos.POSFileWriteUtils},
+    {@link com.redknee.app.crm.pos.CashierGzipCSVHome},
+    {@link com.redknee.app.crm.pos.ConciliationGzipCSVHome},
+    {@link com.redknee.app.crm.pos.ExternalAgentsGzipCSVHome},
+    {@link com.redknee.app.crm.pos.POSIVRExtractGzipCSVHome},
+    {@link com.redknee.app.crm.pos.POSPaymentExceptionGzipCSVHome}
+  </dt>
+
+  <dd>
+    These classes provide simple, low-level, output generation functionality.
+    The GzipCSVHomes extend the functionality from 
+    {@link com.redknee.app.crm.util.GzipCSVHome} 
+    which is extends
+    {@link com.redknee.framework.xhome.csv.GenericCSVHome}
+    and they write CSV formatted files compressed with the Gzip algorithm.<BR>
+    {@link com.redknee.app.crm.pos.POSFileWriteUtils} is a class of common 
+    methods used for report generation.
+  </dd>
+
+  <dt>
+    <strong>High-Level Report Generation</strong>:
+    {@link com.redknee.app.crm.pos.CashierProcessor},
+    {@link com.redknee.app.crm.pos.ConciliationProcessor},
+    {@link com.redknee.app.crm.pos.ExternalAgentsProcessor},
+    {@link com.redknee.app.crm.pos.PaymentExceptionProcessor},
+    {@link com.redknee.app.crm.pos.POSIVRProcessor},
+    {@link com.redknee.app.crm.pos.PointOfSaleFileWriter},
+    {@link com.redknee.app.crm.pos.POSReportSupport}
+  </dt>
+
+  <dd>
+    These classes use the services provided by the <em>Low-Level Output
+    Generation</em> classes.  These classes query the DB for the elements that
+    compose each report and fill in the respective beans (Cashier, Conciliation, 
+    External Agents, PaymentException, POSIVR) before writing to the CSV file.
+  </dd>
+
+  <dt>
+    <strong>Record Extractors</strong>:
+    {@link com.redknee.app.crm.pos.CashierAccountVisitor},
+    {@link com.redknee.app.crm.pos.CashierSubscriberVisitor},
+    {@link com.redknee.app.crm.pos.ConciliationVisitor},
+    {@link com.redknee.app.crm.pos.ExternalAgentsVisitor},
+    {@link com.redknee.app.crm.pos.POSIVRVisitor}
+  </dt>
+
+  <dd>
+    These classes do the bulk of the work of extracting information for
+    the respective reports.
+  </dd>
+
+  <dt>
+    <strong>Account Accumulation:</strong>
+    {@link com.redknee.app.crm.pos.AccountAccumulatorVisitor},
+    {@link com.redknee.app.crm.pos.AccumulatorProcessor}
+  </dt>
+
+  <dd>
+    These classes take care of the account balance accumulation.
+    The report generation for Cashier, External Agents and IVR heavily 
+    depend on these accumulations to get up to date values for reporting.
+    Currently, these accumulations are optimized for daily accumulating.
+  </dd>
+
+  <dt>
+    <strong>Cron Task Management:</strong>
+    {@link com.redknee.app.crm.pos.PointOfSale},
+    {@link com.redknee.app.crm.pos.PointOfSaleConsumer},
+    {@link com.redknee.app.crm.pos.PointOfSaleCronAgent},
+    {@link com.redknee.app.crm.pos.PointOfSaleProducer}
+  </dt>
+
+  <dd>
+    These classes detail how the Point of Sale Cron Agent
+    works. The {@link com.redknee.app.crm.pos.PointOfSaleCronAgent} is the 
+    agent installed in to the CronInstall.  The 
+    {@link com.redknee.app.crm.pos.PointOfSaleProducer} and the
+    {@link com.redknee.app.crm.pos.PointOfSaleConsumer} are the classes
+    that invoke the accumulator in <em>Account Accumulation</em> and 
+    the report processors in <em>High-Level Report Generation</em>
+    to create the reports.
+  </dd>
+
+  <dt>
+    <strong>Logging:</strong>
+    {@link com.redknee.app.crm.pos.POSLogWriter},
+    {@link com.redknee.app.crm.pos.POSExceptionListener},
+    {@link com.redknee.app.crm.pos.POSProcessorException}
+  </dt>
+
+  <dd>
+    These classes are used to facilitate progress logging for the processors.
+  </dd>
+
+</dl>
+
+<h2>TODO</h2>
+
+<p>The following is a list of the near-to-long-term items that should be done in
+this package.  Higher-priority items can be found documented in the code.</p>
+
+<ol>
+
+  <li>Use GzipCSVHome support from framework rather than from 
+  com.redknee.app.crm.util.  Remove the GzipCSVHomes listed in
+  <em>Low-Level Output Generation:</em>.</li>
+
+  <li>Improve the accumulation strategy to allow accumulations to specific dates,
+  in any order (as opposed to forward order).  Currently, accumulations are 
+  optimized for daily calculations in the <em>forward</em> direction (for a date
+  in the past to any date after that).</li>
+
+</ol>
+
+<h2>Package Specification</h2>
+
+<ul>
+   <li>CRM High Level Document (HLD) and E-Care Customer Care Documents in DOORS.</li>
+</ul>
+
+
+<h2>Related Documentation </h2>
+
+<ul>
+   <li><a href="http://krusty/bin/view/Main/?topic=AppCrm">Twiki.Main.AppCrm</a></li>
+</ul>
+
+
+
+</body>
+</html>
